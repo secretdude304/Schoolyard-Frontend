@@ -1,17 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View,Button, TextInput } from 'react-native';
 import Home from "./Screens/Home";
-import New from "./Screens/New"
+import New from "./Screens/New";
 import Postdetail from './Screens/Postdetails';
-import VerifySchool from './Screens/VerifySchool';
+import SelectSchool from './Screens/SelectSchool';
+import VerifySchool from './Screens/VerifySchools';
 import { NavigationContainer, StackActions } from '@react-navigation/native';
+import SignInScreen from "./Screens/SignInScreen";
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import * as SecureStore from 'expo-secure-store';
+import { useNavigation } from '@react-navigation/native';
+
 
 const AuthContext = React.createContext();
 
 const Stack = createStackNavigator()
+
+
 
 function SplashScreen() {
   return (
@@ -19,6 +25,40 @@ function SplashScreen() {
       <Text>Loading...</Text>
     </View>
   );
+}
+function Register({route}) {
+  const email = route.params.email
+  const school = route.params.school
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const { signUp } = React.useContext(AuthContext);
+  console.log(email)
+  return (
+      <View> 
+        <Text>{email}</Text>
+        <TextInput 
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <Button
+        title = "Sign up"
+        onPress={()=> signUp({username,password,email})}
+        />
+      </View>
+    
+  ); 
+}
+function CreateUser(){
+ const navigation = useNavigation(); 
+ navigation.navigate("Home")
 }
 const headerstyles = {
   title:"All Posts",
@@ -28,29 +68,7 @@ const headerstyles = {
   }
 }
 
-function SignInScreen() {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
 
-  const { signIn } = React.useContext(AuthContext);
-
-  return (
-    <View>
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <Button title="Sign in" onPress={() => signIn({ username, password })} />
-    </View>
-  );
-}
 
 export default function App({navigation}) {
  
@@ -76,7 +94,7 @@ export default function App({navigation}) {
               userToken: null,
             };
         }
-      },
+      }, 
       {
         isLoading: true,
         isSignout: false,
@@ -96,6 +114,8 @@ export default function App({navigation}) {
         },
         signOut: () => dispatch({ type: 'SIGN_OUT' }),
         signUp: async (data) => {
+          console.log(data.email)
+          console.log(data.username)
           // In a production app, we need to send user data to server and get a token
           // We will also need to handle errors if sign up failed
           // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
@@ -115,11 +135,14 @@ return (
        {state.userToken == null ? (
         // No token found, user isn't signed in
         <React.Fragment>
-        
-        <Stack.Screen name="SignInScreen" component = {SignInScreen}
-        options = {{...headerstyles,title:"Sign in"}} /> 
         <Stack.Screen name="VerifySchool" component = {VerifySchool}
         options = {{...headerstyles,title:"Verify school"}} /> 
+        <Stack.Screen name="SelectSchool" component = {SelectSchool}
+        options = {{...headerstyles,title:"Select Your School"}} /> 
+        <Stack.Screen name="SignInScreen" component = {SignInScreen}
+        options = {{...headerstyles,title:"Sign in"}} /> 
+        <Stack.Screen name="Register" component = {Register}
+        options = {{...headerstyles,title:"Register"}} /> 
         
        </React.Fragment>
   
@@ -146,7 +169,7 @@ return (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eddfdf',
+    backgroundColor: '#eddfdf', 
   },
 });
 

@@ -31,6 +31,7 @@ function home(props) {
         })
         .then(resp => resp.json())
         .then(data =>{
+            console.log(data)
             setData(data)
             setLoading(false)
          })
