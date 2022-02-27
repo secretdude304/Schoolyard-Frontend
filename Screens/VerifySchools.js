@@ -48,7 +48,7 @@ function navigateSchool(){
        navigation.navigate('SelectSchool',{data:school, email: userInfo})
    }
    else{
-       console.log(userInfo)
+      
        navigation.navigate('Register',{email:userInfo, school:school})
    }
 }
@@ -67,12 +67,12 @@ function navigateSchool(){
     })
 
     userInfoResponse.json().then(data => {
-      console.log(data)
+      
       setUserInfo(data.email);
       
     })
     .then(data =>{
-        console.log(userInfo)
+        
         fetchSchool();
     });
     
@@ -86,6 +86,7 @@ function navigateSchool(){
         title={"Verify School"}
         onPress={ () => { promptAsync({ showInRecents: true}) }}
       />
+      <Text onPress={()=>{navigation.navigate("SignInScreen")}}>Sign In </Text>
       <StatusBar style="auto" />
     </View>
   );

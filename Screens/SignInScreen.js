@@ -12,8 +12,23 @@ import { NavigationHelpersContext } from '@react-navigation/native';
 export default function SignInScreen() {
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
+    
+    
+    function LogIn() {
+      fetch("http:/192.168.86.87/token/",{
+        method:"POST",
+        headers:{
+          'Content-Type':"application/json"
+        },
+        body: JSON.stringify({'username':username,'password':password})
+      })
+      .then(data => console.log(data))
+      .then(()=>{SecureStore.setItemAsync(accestoken, data.accesstoken)})
+      .then(()=>{SecureStore.setItemAsync(refreshtoken, data.refreshtoken)});
 
-  
+    }
+    
+    
     return (
       <View>
         <TextInput
@@ -27,6 +42,7 @@ export default function SignInScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
+        <Button title="Sign in" onPress={ () => {LogIn()}} />
       </View>
     );
   }

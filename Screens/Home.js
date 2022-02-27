@@ -1,8 +1,10 @@
+import react from 'react';
 import React from 'react';
 import {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Button, FlatList, Alert } from 'react-native';
 import {Card, Title, FAB} from "react-native-paper";
 import postdetails from './Postdetails';
+import * as SecureStore from 'expo-secure-store';
  
 
 
@@ -10,6 +12,18 @@ import postdetails from './Postdetails';
 function home(props) {
     const [data,setData] = useState([])
     const [loading,setLoading] = useState(true)
+    const [school] = null
+    const refresh = null
+    const accesstokens = null
+    async function getValueFor() {
+        let refresh = await SecureStore.getItemAsync('refreshtoken');
+        let accesstokens = await SecureStore.getItemAsync('accesstoken');
+        
+      }
+    
+    React.useEffect(()=>{
+        getValueFor
+    });
     const loadData = () => {
         fetch("http:/192.168.86.87/snippets/",{
             method:"GET"
