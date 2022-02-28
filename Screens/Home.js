@@ -10,9 +10,9 @@ import * as SecureStore from 'expo-secure-store';
 
 
 function home(props) {
-    const [data,setData] = useState([])
+    const [data,setData] = useState("")
     const [loading,setLoading] = useState(true)
-    const [school] = null
+    const school = null
     const refresh = null
     const accesstokens = null
     async function getValueFor() {
@@ -45,7 +45,6 @@ function home(props) {
         })
         .then(resp => resp.json())
         .then(data =>{
-            console.log(data)
             setData(data)
             setLoading(false)
          })
