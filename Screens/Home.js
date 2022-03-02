@@ -12,6 +12,25 @@ import * as SecureStore from 'expo-secure-store';
 function home(props) {
     const [data,setData] = useState("")
     const [loading,setLoading] = useState(true)
+    const [userTokeninitial, setuserTokeninitial] = React.useState("")
+    React.useEffect(() => {
+        // Fetch the token from storage then navigate to our appropriate place
+        const bootstrapAsync = async () => {
+          let userToken;
+    
+          try {
+            userToken = await SecureStore.getItemAsync('accesstoken');
+            // Restore token stored in `SecureStore` or any other encrypted storage
+            // userToken = await SecureStore.getItemAsync('userToken');
+          } catch (e) {
+            // Restoring token failed
+            console.log("error")
+          }
+    
+          // After restoring token, we may need to validate it in production apps
+          console.log(userToken)
+          setuserTokeninitial(userToken)
+        }});
     const school = null
     const refresh = null
     const accesstokens = null

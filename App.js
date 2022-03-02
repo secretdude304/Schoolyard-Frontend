@@ -32,6 +32,9 @@ function HomeScreen() {
   );
 }
 
+
+
+
 function Register({route}) {
   const email = route.params.email
   const [username, setUsername] = React.useState('');
@@ -88,6 +91,23 @@ async function save(key, value) {
   console.log(value)
 }
 
+let updateToken = async ()=> {
+
+  async function Signinlol1(){
+        
+    return fetch("http:/192.168.86.87/token/refresh",{
+      method:"POST",
+      headers:{ 
+        'Content-Type':"application/json"
+      },
+      body: JSON.stringify({'refresh':state.userToken.refreshtoken})
+      
+    }).then(response => response.json());
+  }
+  const usertokens123 = await Signinlol1();
+
+}
+
 export default function App({ navigation }) {
 
 
@@ -113,29 +133,39 @@ export default function App({ navigation }) {
             isSignout: true,
             userToken: null,
           };
+        case 'SET_USER_DATA':
+          return {
+            ...prevState,
+            username: action.username,
+            school: action.school
+          };
       }
     },
     {
       isLoading: true,
       isSignout: false,
       userToken: null,
+      username: null,
+      school: null,
     }
   );
 
   React.useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
-      
+      let userToken;
 
       try {
+        userToken = await SecureStore.getItemAsync('accesstoken');
         // Restore token stored in `SecureStore` or any other encrypted storage
         // userToken = await SecureStore.getItemAsync('userToken');
       } catch (e) {
         // Restoring token failed
+        console.log("error")
       }
 
       // After restoring token, we may need to validate it in production apps
-
+      console.log(userToken)
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
       dispatch({ type: 'RESTORE_TOKEN', token: userToken });
@@ -189,12 +219,29 @@ export default function App({ navigation }) {
         
       dispatch({ type: 'SIGN_IN', token: usertokens12 });
       },
+      SetUserData: async (data) => {
+        async function UserDataget(){
+          return fetch("http:/192.168.86.87/register/",{
+            method:"POST",
+            headers:{ 
+              'Content-Type':"application/json"
+            },
+            body: JSON.stringify({'username':data.username,'password':data.password,'email':data.email})
+            
+          }).then(response => response.json());
+        }
+        const usertokens12 = await UserDataget();
+        
+         
+        
+      dispatch({ type: 'SET_USER_DATA', username: "hi", school:"fairfield" });
+       },
     }),
     []
   );
-
+  
   return (
-    <AuthContext.Provider value={authContext}>
+    <AuthContext.Provider value={authContext, state}>
     <NavigationContainer>
       <Stack.Navigator>
       
