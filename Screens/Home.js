@@ -5,11 +5,13 @@ import { StyleSheet, Text, View, Button, FlatList, Alert } from 'react-native';
 import {Card, Title, FAB} from "react-native-paper";
 import postdetails from './Postdetails';
 import * as SecureStore from 'expo-secure-store';
- 
+import {AuthContext} from "../App"
 
 
 
 function home(props) {
+    const {state} = React.useContext(AuthContext);
+    
     const [data,setData] = useState("")
     const [loading,setLoading] = useState(true)
     const [userTokeninitial, setuserTokeninitial] = React.useState("")
@@ -37,11 +39,12 @@ function home(props) {
     async function getValueFor() {
         let refresh = await SecureStore.getItemAsync('refreshtoken');
         let accesstokens = await SecureStore.getItemAsync('accesstoken');
-        
+        console.log(refresh)
+        console.log(accesstokens)
       }
     
     React.useEffect(()=>{
-        getValueFor
+        getValueFor()
     });
     const loadData = () => {
         fetch("http:/192.168.86.87/snippets/",{

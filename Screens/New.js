@@ -1,17 +1,19 @@
 import React , {useState} from 'react'
 import { StyleSheet, Text, View } from 'react-native';
 import {TextInput, Button} from 'react-native-paper';
-
+import {AuthContext} from "../App"
 
 function New(props) {
  const [title,setTitle] = useState()
+ const {state} = React.useContext(AuthContext);
 
     
  const insertData = () =>{
     fetch("http:/192.168.86.87/snippets/",{
         method:"POST",
         headers : { 
-            "Content-Type":"application/json"
+            "Content-Type":"application/json",
+            'Authorization': 'Bearer ' + state.userToken,
         }, 
         body: JSON.stringify({title:title})
     })

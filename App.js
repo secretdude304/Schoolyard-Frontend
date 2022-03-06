@@ -10,6 +10,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
+import react from 'react';
 
 const AuthContext = React.createContext();
 
@@ -40,7 +41,9 @@ function Register({route}) {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const { signUp } = React.useContext(AuthContext);
+  const { authContext:{signUp} } = React.useContext(AuthContext);
+
+
 
   return (
     <View>
@@ -64,8 +67,11 @@ function SignInScreen() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const { signIn } = React.useContext(AuthContext);
-
+  const { authContext:{signIn} } = React.useContext(AuthContext);
+  const {state} = React.useContext(AuthContext);
+  const [usernamestate, setusernamestate] = React.useState(state.username)
+  console.log(usernamestate)
+  
   return (
     <View>
       <TextInput
@@ -109,9 +115,7 @@ let updateToken = async ()=> {
 }
 
 export default function App({ navigation }) {
-
-
-
+  const { authContext:{SetUserData} } = React.useContext(AuthContext);
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -145,16 +149,17 @@ export default function App({ navigation }) {
       isLoading: true,
       isSignout: false,
       userToken: null,
-      username: null,
+      username: "HELLO",
       school: null,
     }
   );
+   React.useEffect(() => {
 
-  React.useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
-
+       // replenish
+       
       try {
         userToken = await SecureStore.getItemAsync('accesstoken');
         // Restore token stored in `SecureStore` or any other encrypted storage
@@ -163,9 +168,8 @@ export default function App({ navigation }) {
         // Restoring token failed
         console.log("error")
       }
-
       // After restoring token, we may need to validate it in production apps
-      console.log(userToken)
+     
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
       dispatch({ type: 'RESTORE_TOKEN', token: userToken });
@@ -173,6 +177,23 @@ export default function App({ navigation }) {
 
     bootstrapAsync();
   }, []);
+
+  
+  React.useEffect(() => {
+
+    // Fetch the token from storage then navigate to our appropriate place
+    console.log("heoe")
+     Setallurdata();
+  }, [state.userToken]);
+
+  const Setallurdata = async () => {
+    console.log(state.userToken)
+    
+    console.log(state.userToken)
+    token = state.userToken
+    SetUserData(token)
+
+  };
 
   const authContext = React.useMemo(
     () => ({
@@ -220,28 +241,29 @@ export default function App({ navigation }) {
       dispatch({ type: 'SIGN_IN', token: usertokens12 });
       },
       SetUserData: async (data) => {
-        async function UserDataget(){
-          return fetch("http:/192.168.86.87/register/",{
+        async function UserDataget(){ 
+          return fetch("http:/192.168.86.87/getinfofromtoken/",{
             method:"POST",
             headers:{ 
-              'Content-Type':"application/json"
+              'Content-Type':"application/json",
+              'Authorization': 'Bearer ' + data.userToken,
             },
-            body: JSON.stringify({'username':data.username,'password':data.password,'email':data.email})
+            //body: JSON.stringify({'token':data.token})
             
           }).then(response => response.json());
         }
-        const usertokens12 = await UserDataget();
+        const userData12 = await UserDataget();
         
          
         
-      dispatch({ type: 'SET_USER_DATA', username: "hi", school:"fairfield" });
+      dispatch({ type: 'SET_USER_DATA', username: userData12.username, school: userData12.school });
        },
     }),
     []
   );
   
   return (
-    <AuthContext.Provider value={authContext, state}>
+    <AuthContext.Provider value={{authContext, state}}>
     <NavigationContainer>
       <Stack.Navigator>
       
