@@ -1,11 +1,12 @@
 import React , {useState} from 'react'
 import { StyleSheet, Text, View } from 'react-native';
 import {TextInput, Button} from 'react-native-paper';
-import {AuthContext} from "../App"
+import AuthContext from "../App"
 
 function New(props) {
+ const [{signUp}, state] = React.useContext(AuthContext);
  const [title,setTitle] = useState()
- const {state} = React.useContext(AuthContext);
+ 
 
     
  const insertData = () =>{
@@ -15,7 +16,7 @@ function New(props) {
             "Content-Type":"application/json",
             'Authorization': 'Bearer ' + state.userToken,
         }, 
-        body: JSON.stringify({title:title})
+        body: JSON.stringify({title:title, username:state.username})
     })
     .then(resp => resp.json())
     .then(data =>{

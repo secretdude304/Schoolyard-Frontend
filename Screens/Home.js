@@ -1,16 +1,19 @@
 import react from 'react';
 import React from 'react';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import { StyleSheet, Text, View, Button, FlatList, Alert } from 'react-native';
 import {Card, Title, FAB} from "react-native-paper";
 import postdetails from './Postdetails';
 import * as SecureStore from 'expo-secure-store';
-import {AuthContext} from "../App"
+import  {AuthContext}  from '../App'
 
 
 
+ 
 function home(props) {
-    const {state} = React.useContext(AuthContext);
+    const {authContext, state} = React.useContext(AuthContext);
+
+    console.log(state.username)
     
     const [data,setData] = useState("")
     const [loading,setLoading] = useState(true)
@@ -47,7 +50,7 @@ function home(props) {
         getValueFor()
     });
     const loadData = () => {
-        fetch("http:/192.168.86.87/snippets/",{
+        fetch("http:/192.168.86.108/snippets/",{
             method:"GET"
         })
         .then(resp => resp.json())
@@ -62,7 +65,7 @@ function home(props) {
         props.navigation.navigate("detail", {data:data})
     }
     useEffect(()=>{
-        fetch("http:/192.168.86.87/snippets/",{
+        fetch("http:/192.168.86.108/snippets/",{
             method:"GET"
         })
         .then(resp => resp.json())

@@ -12,7 +12,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import react from 'react';
 
-const AuthContext = React.createContext();
+export const AuthContext = React.createContext();
 
 function SplashScreen() {
   return (
@@ -22,16 +22,7 @@ function SplashScreen() {
   );
 }
 
-function HomeScreen() {
-  const { signOut } = React.useContext(AuthContext);
 
-  return (
-    <View>
-      <Text>Signed in!</Text>
-      <Button title="Sign out" onPress={signOut} />
-    </View>
-  );
-}
 
 
 
@@ -41,10 +32,13 @@ function Register({route}) {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const { authContext:{signUp} } = React.useContext(AuthContext);
+  const [{signUp}, state] = React.useContext(AuthContext);
+  console.log(state.username)
+  console.log(state.username)
+  console.log(state.username)
 
 
-
+ 
   return (
     <View>
       <TextInput
@@ -67,11 +61,8 @@ function SignInScreen() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const { authContext:{signIn} } = React.useContext(AuthContext);
-  const {state} = React.useContext(AuthContext);
-  const [usernamestate, setusernamestate] = React.useState(state.username)
-  console.log(usernamestate)
-  
+  const [usernamestate, setusernamestate] = React.useState(username)
+ 
   return (
     <View>
       <TextInput
@@ -94,14 +85,14 @@ const Stack = createStackNavigator();
 
 async function save(key, value) {
   await SecureStore.setItemAsync(key, value);
-  console.log(value)
+
 }
 
 let updateToken = async ()=> {
 
-  async function Signinlol1(){
+  async function RefreshtokenMoment(){
         
-    return fetch("http:/192.168.86.87/token/refresh",{
+    return fetch("http:/192.168.86.108/token/refresh",{
       method:"POST",
       headers:{ 
         'Content-Type':"application/json"
@@ -110,12 +101,42 @@ let updateToken = async ()=> {
       
     }).then(response => response.json());
   }
-  const usertokens123 = await Signinlol1();
+  const usertokens123 = await RefreshtokenMoment();
 
 }
 
 export default function App({ navigation }) {
-  const { authContext:{SetUserData} } = React.useContext(AuthContext);
+  
+  async function SetUserData(token){
+    
+    const token1 = token
+    async function UserDataget(token12){ 
+      console.log(token12)
+      console.log(token12)
+      console.log(token12)
+      console.log(token12)
+      console.log(token12)
+      console.log(token12)
+      return fetch("http:/192.168.86.108/getinfofromtoken/",{
+        method:"GET",
+        headers:{  
+          'Authorization': token12.accesstoken,
+        },
+        //body: JSON.stringify({'token':data.token})
+        
+      }).then(response => response.json());
+      
+    }
+    const userData12 = await UserDataget(token1);
+    console.log(userData12)
+    console.log(userData12)
+    console.log(userData12)
+    
+    
+    
+  
+    dispatch({ type: 'SET_USER_DATA', username: userData12.username, school: userData12.school });
+  }
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -150,7 +171,7 @@ export default function App({ navigation }) {
       isSignout: false,
       userToken: null,
       username: "HELLO",
-      school: null,
+      school: "fairfieldwarde",
     }
   );
    React.useEffect(() => {
@@ -182,18 +203,15 @@ export default function App({ navigation }) {
   React.useEffect(() => {
 
     // Fetch the token from storage then navigate to our appropriate place
-    console.log("heoe")
-     Setallurdata();
+  
+    token = state.userToken
+
+    if (token != null){
+     SetUserData(token);
+    }
   }, [state.userToken]);
 
-  const Setallurdata = async () => {
-    console.log(state.userToken)
-    
-    console.log(state.userToken)
-    token = state.userToken
-    SetUserData(token)
 
-  };
 
   const authContext = React.useMemo(
     () => ({
@@ -204,7 +222,7 @@ export default function App({ navigation }) {
         // In the example, we'll use a dummy token
         async function Signinlol1(){
         
-          return fetch("http:/192.168.86.87/token/",{
+          return fetch("http:/192.168.86.108/token/",{
             method:"POST",
             headers:{ 
               'Content-Type':"application/json"
@@ -214,7 +232,7 @@ export default function App({ navigation }) {
           }).then(response => response.json());
         }
         const usertokens123 = await Signinlol1();
-        console.log(usertokens123)
+
         save("refreshtoken", usertokens123.refreshtoken)
         save("usertoken", usertokens123.accesstoken)
         dispatch({ type: 'SIGN_IN', token: usertokens123 });
@@ -223,7 +241,7 @@ export default function App({ navigation }) {
       signUp: async (data) => {
        async function Signuplol(){
         
-        return fetch("http:/192.168.86.87/register/",{
+        return fetch("http:/192.168.86.108/register/",{
           method:"POST",
           headers:{ 
             'Content-Type':"application/json"
@@ -233,37 +251,18 @@ export default function App({ navigation }) {
         }).then(response => response.json());
       }
       const usertokens12 = await Signuplol();
-      console.log(usertokens12)
 
       save("refreshtoken", usertokens12.refreshtoken)
       save("usertoken", usertokens12.accesstoken)
         
-      dispatch({ type: 'SIGN_IN', token: usertokens12 });
+      dispatch({ type: 'SIGN_IN', token: usertokens12.accesstoken });
       },
-      SetUserData: async (data) => {
-        async function UserDataget(){ 
-          return fetch("http:/192.168.86.87/getinfofromtoken/",{
-            method:"POST",
-            headers:{ 
-              'Content-Type':"application/json",
-              'Authorization': 'Bearer ' + data.userToken,
-            },
-            //body: JSON.stringify({'token':data.token})
-            
-          }).then(response => response.json());
-        }
-        const userData12 = await UserDataget();
-        
-         
-        
-      dispatch({ type: 'SET_USER_DATA', username: userData12.username, school: userData12.school });
-       },
     }),
     []
   );
-  
+
   return (
-    <AuthContext.Provider value={{authContext, state}}>
+    <AuthContext.Provider value={[authContext,state]}>
     <NavigationContainer>
       <Stack.Navigator>
       

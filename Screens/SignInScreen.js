@@ -15,7 +15,7 @@ export default function SignInScreen() {
     
     
     function LogIn() {
-      fetch("http:/192.168.86.87/token/",{
+      fetch("http:/127.0.0.1/token/",{
         method:"POST",
         headers:{
           'Content-Type':"application/json"
