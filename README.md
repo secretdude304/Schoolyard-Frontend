@@ -1,4 +1,4 @@
-# anonfrontend
+# Schoolyard Frontend
 
 This repository was created as a part of Schoolyard. To learn more about Schoolyard go to https://schoolyard.teleporthq.app/. 
 
