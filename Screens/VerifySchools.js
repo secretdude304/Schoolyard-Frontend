@@ -28,8 +28,8 @@ export default function App() {
   }, [response]);
   
   const fetchSchool = () =>{
-    fetch("http:/192.168.86.87/verifyschool/",{ 
-        method:"POST",
+    fetch("http:/192.168.86.108/verifyschool/",{ 
+        method:"POST", 
         headers : { 
             "Content-Type":"application/json"
         }, 
